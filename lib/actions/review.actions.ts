@@ -6,6 +6,7 @@ import { formatError } from '../utils';
 import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
 import { revalidatePath } from 'next/cache';
+import { Prisma } from '@prisma/client';
 
 // Create & Update Reviews
 export async function createUpdateReview(
@@ -49,7 +50,7 @@ export async function createUpdateReview(
         });
       } else {
         // Create review
-        await tx.review.create({ data: review });
+        await tx.review.create({ data: review as Prisma.ReviewCreateInput });
       }
 
       // Get avg rating

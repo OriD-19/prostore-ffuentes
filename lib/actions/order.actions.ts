@@ -10,7 +10,7 @@ import { CartItem, PaymentResult, ShippingAddress } from '@/types';
 import { paypal } from '../paypal';
 import { revalidatePath } from 'next/cache';
 import { PAGE_SIZE } from '../constants';
-import { Prisma, PrismaPromise } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { sendPurchaseReceipt } from '@/email';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
@@ -72,7 +72,7 @@ export async function createOrder() {
             ...item,
             price: item.price,
             orderId: insertedOrder.id,
-          } as Prisma.OrderItemCreateInput,
+          } as unknown as Prisma.OrderItemCreateInput,
         });
       }
       // Clear cart
@@ -356,13 +356,13 @@ export async function getAllOrders({
   const queryFilter: Prisma.OrderWhereInput =
     query && query !== 'all'
       ? {
-          user: {
-            name: {
-              contains: query,
-              mode: 'insensitive',
-            } as Prisma.StringFilter,
-          },
-        }
+        user: {
+          name: {
+            contains: query,
+            mode: 'insensitive',
+          } as Prisma.StringFilter,
+        },
+      }
       : {};
 
   const data = await prisma.order.findMany({
