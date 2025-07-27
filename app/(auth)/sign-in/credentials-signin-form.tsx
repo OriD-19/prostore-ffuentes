@@ -11,10 +11,12 @@ import { signInWithCredentials } from '@/lib/actions/user.actions';
 import { useSearchParams } from 'next/navigation';
 
 const CredentialsSignInForm = () => {
-  const [data, action] = useActionState(signInWithCredentials, {
+  const [rawData, action] = useActionState(signInWithCredentials, {
     success: false,
     message: '',
   });
+
+  const data = rawData as { success: boolean, message: string};
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
