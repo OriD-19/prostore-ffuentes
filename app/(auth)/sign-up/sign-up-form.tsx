@@ -11,10 +11,12 @@ import { signUpUser } from '@/lib/actions/user.actions';
 import { useSearchParams } from 'next/navigation';
 
 const SignUpForm = () => {
-  const [data, action] = useActionState(signUpUser, {
+  const [rawData, action] = useActionState(signUpUser, {
     success: false,
     message: '',
   });
+
+  const data = rawData as { success: boolean, message: string };
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
