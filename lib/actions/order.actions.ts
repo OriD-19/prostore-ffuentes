@@ -10,7 +10,7 @@ import { CartItem, PaymentResult, ShippingAddress } from '@/types';
 import { paypal } from '../paypal';
 import { revalidatePath } from 'next/cache';
 import { PAGE_SIZE } from '../constants';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaPromise } from '@prisma/client';
 import { sendPurchaseReceipt } from '@/email';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
@@ -64,7 +64,7 @@ export async function createOrder() {
     // Create a transaction to create order and order items in database
     const insertedOrderId = await prisma.$transaction(async (tx) => {
       // Create order
-      const insertedOrder = await tx.order.create({ data: order });
+      const insertedOrder = await tx.order.create({ data: order as Prisma.OrderCreateInput });
       // Create order items from the cart items
       for (const item of cart.items as CartItem[]) {
         await tx.orderItem.create({
@@ -72,7 +72,7 @@ export async function createOrder() {
             ...item,
             price: item.price,
             orderId: insertedOrder.id,
-          },
+          } as Prisma.OrderItemCreateInput,
         });
       }
       // Clear cart
